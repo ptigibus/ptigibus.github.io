@@ -11,6 +11,20 @@
     <link rel="stylesheet" crossorigin href="/admin/assets/index-BGkNBI-w.css">
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased">
+    <script>
+      // Counterpart to scripts/spa-404.html. If the SPA was reached via the
+      // gh-pages 404 redirector (/admin/?p=<encoded>&q=<encoded>), reconstruct
+      // the original path before React-Router boots. No-op when ?p= is absent.
+      (function () {
+        var u = new URL(location.href);
+        var p = u.searchParams.get('p');
+        if (p == null) return;
+        var q = u.searchParams.get('q') || '';
+        var base = location.pathname.replace(/\/$/, '');
+        var rebuilt = base + '/' + p + (q ? '?' + q : '') + location.hash;
+        history.replaceState(null, '', rebuilt);
+      })();
+    </script>
     <div id="root"></div>
   </body>
 </html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redbus ChatoStBo</title>
+    <meta name="theme-color" content="#c83a13" />
+    <script>
+      // GitHub Pages serves THIS file for any unmatched path under the site.
+      // For /app/<rest> and /admin/<rest> we re-route to the corresponding
+      // SPA root, smuggling the original path through ?p= (and the original
+      // query string through ?q=). The SPA's main.tsx calls
+      // restoreSpaPathFromQuery() on boot to reverse this and replace history
+      // so React-Router sees the real path. (Rafgraph's spa-github-pages trick.)
+      (function () {
+        var path = location.pathname;
+        var search = location.search;
+        var hash = location.hash;
+        var m = /^\/(app|admin)(\/.*)?$/.exec(path);
+        if (m) {
+          var base = '/' + m[1] + '/';
+          var rest = m[2] && m[2].length > 1 ? m[2].slice(1) : '';
+          var qs = rest ? '?p=' + encodeURIComponent(rest) : '';
+          if (search) qs += (qs ? '&' : '?') + 'q=' + encodeURIComponent(search.slice(1));
+          location.replace(base + qs + hash);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <noscript>Page introuvable. Activez JavaScript ou retournez à <a href="/">l'accueil</a>.</noscript>
+  </body>
+</html>
