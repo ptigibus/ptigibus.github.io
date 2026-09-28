@@ -1,85 +1,92 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#c83a13" />
-    <link rel="icon" type="image/png" href="/redbus.png" />
-    <link rel="apple-touch-icon" href="/redbus.png" />
-    <title>Redbus ChatoStBo</title>
-    <style>
-      * { box-sizing: border-box; }
-      html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-        background: #f8fafc;
-        color: #0f172a;
-      }
-      main {
-        min-height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-        text-align: center;
-      }
-      img.logo {
-        width: 96px;
-        height: 96px;
-        margin-bottom: 1rem;
-      }
-      h1 {
-        font-size: 2.5rem;
-        margin: 0 0 .5rem;
-        font-weight: 600;
-        color: #c83a13;
-      }
-      p.tagline {
-        margin: 0 0 2.5rem;
-        color: #64748b;
-        font-size: 1rem;
-      }
-      .links {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        width: 100%;
-        max-width: 24rem;
-      }
-      a.btn {
-        display: block;
-        padding: 1rem 1.25rem;
-        border-radius: .75rem;
-        text-decoration: none;
-        font-size: 1.125rem;
-        font-weight: 500;
-        color: white;
-        background: #c83a13;
-        transition: background .15s ease;
-      }
-      a.btn:hover { background: #a82d0a; }
-      a.btn.secondary { background: #475569; }
-      a.btn.secondary:hover { background: #334155; }
-      footer {
-        margin-top: 3rem;
-        font-size: .75rem;
-        color: #94a3b8;
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <img class="logo" src="/redbus.png" alt="Redbus" />
-      <h1>Redbus ChatoStBo</h1>
-      <p class="tagline">Réservation des trajets scolaires</p>
-      <div class="links">
-        <a class="btn" href="/app/">Application</a>
-        <a class="btn secondary" href="/admin/">Administration</a>
-      </div>
-      <footer>Redbus ChatoStBo</footer>
-    </main>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Redbus ChatoStBo — nouvelle adresse</title>
+<!--
+  Plan 36 M7 step 7 — the old site becomes a redirect site.
+
+  GitHub Pages serves this file for ANY path it does not find, so one file
+  covers every old URL. index.html handles the bare root.
+
+  The mapping: drop a leading `/app`, keep the query string, and send it to
+  the new host — under `/chatostbo` for parent pages, since this site only
+  ever served that one line.
+
+    /                          ->  app.ptigibus.com/chatostbo
+    /app/trajets?view=history  ->  app.ptigibus.com/chatostbo/trajets?view=history
+    /admin/familles            ->  app.ptigibus.com/admin/familles
+    /admin/c/<token>           ->  app.ptigibus.com/admin/c/<token>
+    /app/auth/verify?token=…   ->  app.ptigibus.com/auth/verify?token=…
+
+  The slug IS inserted (plan 40, 2026-09-25). It used to rely on the apps'
+  LegacyRedirect, but that only helps a signed-in user — and after the move
+  nobody is signed in (tokens are per origin), while plan 43 made the root a
+  landing page with no login. Without the slug every old bookmark ended
+  there. `/auth/verify` stays at the root (plan 43 D2: links in mailboxes);
+  `/admin` is unchanged (credential login, LinePicker).
+
+  It does NOT rewrite conducteur tokens either. backend/src/routes/
+  lineRouting.ts resolves a token with no `<slug>.` prefix to the default
+  line, precisely so links already printed on paper keep working.
+
+  Query strings matter most for `/auth/verify?token=…`: a magic link sent
+  minutes before the cut-over must still sign its recipient in.
+-->
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    padding: 24px; background: #f8fafc; color: #0f172a;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0f172a; color: #e2e8f0; }
+    a.btn { background: #38bdf8; color: #0f172a; }
+  }
+  main { max-width: 32rem; text-align: center; }
+  h1 { font-size: 1.25rem; margin: 0 0 .75rem; }
+  p { margin: 0 0 1rem; line-height: 1.5; }
+  a.btn {
+    display: inline-block; padding: .65rem 1.1rem; border-radius: .5rem;
+    background: #0284c7; color: #fff; text-decoration: none; font-weight: 600;
+  }
+  code { font-size: .85em; opacity: .8; word-break: break-all; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Redbus ChatoStBo a déménagé</h1>
+  <p>Le site est maintenant à l’adresse <strong>app.ptigibus.com</strong>.
+     Vous allez être redirigé automatiquement.</p>
+  <p><a class="btn" id="go" href="https://app.ptigibus.com/chatostbo">Continuer</a></p>
+  <p><code id="target"></code></p>
+  <p>Vous devrez vous reconnecter une fois : demandez un nouveau lien de
+     connexion si besoin.</p>
+</main>
+<script>
+(function () {
+  var NEW_ORIGIN = 'https://app.ptigibus.com';
+
+  // Exported shape kept simple on purpose: scripts/redirect-site/map.test.mjs
+  // imports this same expression, so the tested logic is the shipped logic.
+  function mapPath (pathname, search, hash) {
+    var p = pathname.replace(/^\/app(?=\/|$)/, '') || '/';
+    if (!/^\/(admin|auth)(\/|$)/.test(p)) p = '/chatostbo' + (p === '/' ? '' : p);
+    return NEW_ORIGIN + p + (search || '') + (hash || '');
+  }
+
+  var target = mapPath(location.pathname, location.search, location.hash);
+  var link = document.getElementById('go');
+  link.href = target;
+  document.getElementById('target').textContent = target;
+
+  // replace() so the old URL does not linger in history: pressing Back should
+  // return to wherever the person came from, not bounce through this page.
+  location.replace(target);
+})();
+</script>
+</body>
 </html>
